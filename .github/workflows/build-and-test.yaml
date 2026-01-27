@@ -189,7 +189,8 @@ jobs:
             exit 1
           fi
 
-      - name: Pretest
+      - if: runner.os != 'Windows'
+        name: Pretest
         run: yarn test --testNamePattern='^Browser Impersonation' test/curl/impersonate.spec.ts
 
       - if: runner.os != 'Windows'
@@ -239,5 +240,9 @@ jobs:
           path: build/${{ env.PACKAGE_ARTIFACT }}.tar.gz
           if-no-files-found: error
 
-      - name: Test
+      - if: runner.os != 'Windows'
+        name: Test
         run: yarn test
+      - if: runner.os == 'Windows'
+        name: Test (skip impersonation on Windows)
+        run: yarn test --testNamePattern="^(?!Browser Impersonation)"
