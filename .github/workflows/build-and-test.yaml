@@ -110,10 +110,10 @@ jobs:
           $packageJson = Get-Content package.json -Raw | ConvertFrom-Json
           $packageJson.version = $pkgver
           $packageJson | ConvertTo-Json -Depth 100 | Set-Content package.json
-          $os = node -e \"console.log(process.platform)\"
-          $arch = node -e \"console.log(process.arch)\"
-          $node_abi = node -e \"console.log('node-v' + process.versions.modules)\"
-          $binding_artifact = \"node_libcurl_ja3-v$pkgver-$node_abi-$os-$arch\"
+          $os = node -e "console.log(process.platform)"
+          $arch = node -e "console.log(process.arch)"
+          $node_abi = node -e "console.log('node-v' + process.versions.modules)"
+          $binding_artifact = "node_libcurl_ja3-v$pkgver-$node_abi-$os-$arch"
           \"pkgver=$pkgver\" >> $env:GITHUB_OUTPUT
           \"binding_artifact=$binding_artifact\" >> $env:GITHUB_OUTPUT
           \"package_artifact=node-libcurl-ja3-v$pkgver\" >> $env:GITHUB_OUTPUT
