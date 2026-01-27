@@ -114,12 +114,12 @@ jobs:
           $arch = node -e "console.log(process.arch)"
           $node_abi = node -e "console.log('node-v' + process.versions.modules)"
           $binding_artifact = "node_libcurl_ja3-v$pkgver-$node_abi-$os-$arch"
-          \"pkgver=$pkgver\" >> $env:GITHUB_OUTPUT
-          \"binding_artifact=$binding_artifact\" >> $env:GITHUB_OUTPUT
-          \"package_artifact=node-libcurl-ja3-v$pkgver\" >> $env:GITHUB_OUTPUT
-          \"PKGVER=$pkgver\" >> $env:GITHUB_ENV
-          \"BINDING_ARTIFACT=$binding_artifact\" >> $env:GITHUB_ENV
-          \"PACKAGE_ARTIFACT=node-libcurl-ja3-v$pkgver\" >> $env:GITHUB_ENV
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "pkgver=$pkgver"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "binding_artifact=$binding_artifact"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "package_artifact=node-libcurl-ja3-v$pkgver"
+          Add-Content -Path $env:GITHUB_ENV -Value "PKGVER=$pkgver"
+          Add-Content -Path $env:GITHUB_ENV -Value "BINDING_ARTIFACT=$binding_artifact"
+          Add-Content -Path $env:GITHUB_ENV -Value "PACKAGE_ARTIFACT=node-libcurl-ja3-v$pkgver"
 
       # changes timestamps for files in the curl-impersonate submodule to their git mtime
       # to allow the build cache to work, else it will think all files have been modified
