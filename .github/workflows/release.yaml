@@ -307,7 +307,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body_path: ${{ steps.prepare-env.outputs.changelog_file }}
-          draft: true
+          draft: false
           prerelease: ${{ steps.prepare-env.outputs.is_prerelease }} == 'true'
           files: artifacts/**/*.tar.gz
           fail_on_unmatched_files: true
