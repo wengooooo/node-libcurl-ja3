@@ -149,7 +149,9 @@ jobs:
         run: brew install automake bash libtool make meson ninja
 
       - name: Yarn
-        run: npm_config_build_from_source=true yarn install --frozen-lockfile
+        env:
+          npm_config_build_from_source: true
+        run: yarn install --frozen-lockfile
 
       - name: Build
         run: yarn build:dist
