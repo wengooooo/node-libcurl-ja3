@@ -26,14 +26,10 @@ function run() {
     }
     process.exit(0)
   } else {
-    const r = spawnSync(
-      'bash',
-      [join(__dirname, 'install.sh')],
-      {
-        stdio: 'inherit',
-        env: process.env,
-      },
-    )
+    const r = spawnSync('bash', [join(__dirname, 'install.sh')], {
+      stdio: 'inherit',
+      env: process.env,
+    })
     process.exit(r.status || 0)
   }
 }
