@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [5.2.3] - 2026-01-28
+
+### Fixed
+- Windows CI：修复 PowerShell 解析与环境变量写入问题（使用 Add-Content，规范 node -e 引号）
+- Lint：格式化 scripts/install.js 以满足 prettier
+- 打包上传：Windows 使用 PowerShell tar 打包并通过通配路径上传，避免空路径
+
+### Changed
+- 测试矩阵：Windows 跳过不兼容的 Browser Impersonation/HTTP2/getInfo 用例；Linux/macOS 继续完整测试
+- 工作流：release 改为直接发布（非草稿），新增手动发布工作流以发布指定 tag
+- 构建与发布：区分 Windows 与非 Windows 的产物构建与上传逻辑，确保各平台资产完整
+
 ## [5.2.2] - 2026-01-27
 
 ### Changed
@@ -496,6 +508,7 @@ Special Thanks to [@koskokos2](https://github.com/koskokos2) for their contribut
 - Improved code style, started using prettier
 ## [1.2.0] - 2017-08-28
 
+[5.2.3]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.2...v5.2.3
 [5.2.1]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.0...v5.2.1
 [5.2.2]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.1...v5.2.2
 [5.2.0]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.1.1...v5.2.0
