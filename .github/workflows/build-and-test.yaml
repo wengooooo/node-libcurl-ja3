@@ -96,9 +96,12 @@ jobs:
           binding_artifact=$binding_artifact
           package_artifact=node-libcurl-ja3-v$pkgver
           EOF
+          echo "PKGVER=$pkgver" >> "$GITHUB_ENV"
+          echo "BINDING_ARTIFACT=$binding_artifact" >> "$GITHUB_ENV"
+          echo "PACKAGE_ARTIFACT=node-libcurl-ja3-v$pkgver" >> "$GITHUB_ENV"
       - name: Prepare environment (Windows)
         if: runner.os == 'Windows'
-        id: prepare-env
+        id: prepare-env-win
         shell: pwsh
         run: |
           $commit = (git rev-parse HEAD)
@@ -112,6 +115,9 @@ jobs:
           \"pkgver=$pkgver\" >> $env:GITHUB_OUTPUT
           \"binding_artifact=$binding_artifact\" >> $env:GITHUB_OUTPUT
           \"package_artifact=node-libcurl-ja3-v$pkgver\" >> $env:GITHUB_OUTPUT
+          \"PKGVER=$pkgver\" >> $env:GITHUB_ENV
+          \"BINDING_ARTIFACT=$binding_artifact\" >> $env:GITHUB_ENV
+          \"PACKAGE_ARTIFACT=node-libcurl-ja3-v$pkgver\" >> $env:GITHUB_ENV
 
       # changes timestamps for files in the curl-impersonate submodule to their git mtime
       # to allow the build cache to work, else it will think all files have been modified
@@ -201,32 +207,32 @@ jobs:
         shell: bash
         run: |
           mkdir -p build
-          tar -czf "build/${{ steps.prepare-env.outputs.binding_artifact }}.tar.gz" -C lib/binding/Release .
+          tar -czf "build/${{ env.BINDING_ARTIFACT }}.tar.gz" -C lib/binding/Release .
 
       - name: Upload native binding tarball
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.prepare-env.outputs.binding_artifact }}.tar.gz
-          path: build/${{ steps.prepare-env.outputs.binding_artifact }}.tar.gz
+          name: ${{ env.BINDING_ARTIFACT }}.tar.gz
+          path: build/${{ env.BINDING_ARTIFACT }}.tar.gz
           if-no-files-found: error
 
       - if: runner.os == 'Linux' && matrix.node == '24'
         name: Create package tarball
         run: |
           npm pack
-          pkgver='${{ steps.prepare-env.outputs.pkgver }}'
+          pkgver='${{ env.PKGVER }}'
           tar xf "node-libcurl-ja3-$pkgver.tgz" -C build
           rm -f "node-libcurl-ja3-$pkgver.tgz"
           cd build
           mv package node-libcurl-ja3
-          tar zcf '${{ steps.prepare-env.outputs.package_artifact }}.tar.gz' node-libcurl-ja3
+          tar zcf '${{ env.PACKAGE_ARTIFACT }}.tar.gz' node-libcurl-ja3
 
       - if: runner.os == 'Linux' && matrix.node == '24'
         name: Upload package tarball
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.prepare-env.outputs.package_artifact }}.tar.gz
-          path: build/${{ steps.prepare-env.outputs.package_artifact }}.tar.gz
+          name: ${{ env.PACKAGE_ARTIFACT }}.tar.gz
+          path: build/${{ env.PACKAGE_ARTIFACT }}.tar.gz
           if-no-files-found: error
 
       - name: Test
