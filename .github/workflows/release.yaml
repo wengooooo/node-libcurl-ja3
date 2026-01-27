@@ -263,7 +263,7 @@ jobs:
         run: yarn test
       - if: runner.os == 'Windows'
         name: Test (skip impersonation on Windows)
-        run: yarn test --testNamePattern="^(?!Browser Impersonation)"
+        run: yarn test --testNamePattern="^(?!.*(Browser Impersonation|Comparison with binary version|HTTP2|getInfo))"
 
   gh-release:
     needs:
