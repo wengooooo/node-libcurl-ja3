@@ -12,10 +12,10 @@
     "tls-fingerprinting",
     "web-scraping"
   ],
-  "homepage": "https://github.com/andrewmackrodt/node-libcurl-ja3",
+  "homepage": "https://github.com/wengooooo/node-libcurl-ja3",
   "repository": {
     "type": "git",
-    "url": "git://github.com/andrewmackrodt/node-libcurl-ja3.git"
+    "url": "git://github.com/wengooooo/node-libcurl-ja3.git"
   },
   "license": "MIT",
   "author": "Andrew Mackrodt <andrewmackrodt@gmail.com>",
