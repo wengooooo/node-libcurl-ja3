@@ -209,17 +209,33 @@ jobs:
       - name: Delete curl-impersonate build tarball
         run: rm -f build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz
 
-      - name: Create native binding tarball
+      - if: runner.os != 'Windows'
+        name: Create native binding tarball (Unix)
         shell: bash
         run: |
           mkdir -p build
           tar -czf "build/${{ env.BINDING_ARTIFACT }}.tar.gz" -C lib/binding/Release .
+      - if: runner.os == 'Windows'
+        name: Create native binding tarball (Windows)
+        shell: pwsh
+        run: |
+          if (Test-Path build) { Remove-Item -Recurse -Force build }
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          tar -czf "build/$env:BINDING_ARTIFACT.tar.gz" -C lib/binding/Release .
 
-      - name: Upload native binding tarball
+      - if: runner.os != 'Windows'
+        name: Upload native binding tarball (Unix)
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.BINDING_ARTIFACT }}.tar.gz
           path: build/${{ env.BINDING_ARTIFACT }}.tar.gz
+          if-no-files-found: error
+      - if: runner.os == 'Windows'
+        name: Upload native binding tarball (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BINDING_ARTIFACT }}.tar.gz
+          path: build/*.tar.gz
           if-no-files-found: error
 
       - if: runner.os == 'Linux' && matrix.node == '24'
