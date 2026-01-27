@@ -198,7 +198,7 @@ jobs:
         shell: bash
         run: mv deps/curl-impersonate/build/curl-impersonate.tar.gz "build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz"
 
-      - if: matrix.node == '24'
+      - if: runner.os != 'Windows' && matrix.node == '24'
         name: Upload curl-impersonate build tarball
         uses: actions/upload-artifact@v4
         with:
@@ -206,7 +206,8 @@ jobs:
           path: build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz
           if-no-files-found: error
 
-      - name: Delete curl-impersonate build tarball
+      - if: runner.os != 'Windows'
+        name: Delete curl-impersonate build tarball
         run: rm -f build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz
 
       - if: runner.os != 'Windows'
