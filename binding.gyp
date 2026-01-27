@@ -54,6 +54,40 @@
             ],
           },
         }],
+        ['OS=="win"', {
+          'defines': [
+            'BUILD_IMPERSONATE',
+          ],
+          'include_dirs': [
+            '<(module_root_dir)/deps/lib64/include'
+          ],
+          'libraries': [
+            '<(module_root_dir)/deps/lib64/libcurl_imp.lib',
+            '<(module_root_dir)/deps/lib64/nghttp2.lib',
+            '<(module_root_dir)/deps/lib64/nghttp3.lib',
+            '<(module_root_dir)/deps/lib64/ngtcp2.lib',
+            '<(module_root_dir)/deps/lib64/ngtcp2_crypto_boringssl.lib',
+            '<(module_root_dir)/deps/lib64/cares.lib',
+            '<(module_root_dir)/deps/lib64/brotlicommon.lib',
+            '<(module_root_dir)/deps/lib64/brotlidec.lib',
+            '<(module_root_dir)/deps/lib64/brotlienc.lib',
+            '<(module_root_dir)/deps/lib64/crypto.lib',
+            '<(module_root_dir)/deps/lib64/ssl.lib',
+            'ws2_32.lib',
+            'advapi32.lib',
+            'user32.lib',
+            'gdi32.lib',
+            'iphlpapi.lib',
+            'bcrypt.lib'
+          ],
+          'msvs_settings': {
+            'VCLinkerTool': {
+              'AdditionalLibraryDirectories': [
+                '<(module_root_dir)/deps/lib64'
+              ]
+            }
+          }
+        }],
       ]
     },
     {
@@ -65,6 +99,22 @@
           'files': [ '<(module_path)/<(module_name).node' ],
           'destination': '<(module_root_dir)/lib/binding'
         }
+      ]
+    }
+    ,
+    {
+      'target_name': 'action_after_build_win',
+      'type': 'none',
+      'dependencies': [ '<(module_name)' ],
+      'conditions': [
+        ['OS=="win"', {
+          'copies': [
+            {
+              'files': [ '<(module_root_dir)/deps/lib64/libcurl.dll' ],
+              'destination': '<(module_path)'
+            }
+          ]
+        }]
       ]
     }
   ]

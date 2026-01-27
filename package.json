@@ -1,6 +1,6 @@
 {
   "name": "node-libcurl-ja3",
-  "version": "5.2.2",
+  "version": "5.2.3",
   "description": "Node.js native bindings for libcurl-impersonate. Impersonate Chrome, Edge, Firefox and Safari TLS fingerprints.",
   "keywords": [
     "boringssl",
@@ -48,7 +48,7 @@
     "gen:compile_commands:debug": "yarn pregyp -- configure --debug -- --format=\"gyp.generator.compile_commands_json.py\"",
     "gen:compile_commands:release": "yarn pregyp -- configure --release -- --format=\"gyp.generator.compile_commands_json.py\"",
     "gen:constants": "node scripts/build-constants.js",
-    "install": "scripts/install.sh",
+    "install": "node scripts/install",
     "postinstall": "node scripts/postinstall",
     "lint": "eslint lib/ scripts/ test/ examples/",
     "pregyp": "node-pre-gyp",
@@ -130,7 +130,8 @@
   },
   "os": [
     "darwin",
-    "linux"
+    "linux",
+    "win32"
   ],
   "np": {
     "cleanup": false

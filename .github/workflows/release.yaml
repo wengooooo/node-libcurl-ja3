@@ -40,6 +40,7 @@ jobs:
         os:
           - macos-15
           - ubuntu-22.04
+          - windows-latest
         node:
           - 20
           - 22
@@ -59,6 +60,7 @@ jobs:
 
       - name: Prepare environment
         id: prepare-env
+        if: runner.os != 'Windows'
         run: |
           # make directories
           mkdir -p deps/curl-impersonate/build
@@ -97,15 +99,32 @@ jobs:
           binding_artifact=$binding_artifact
           package_artifact=node-libcurl-ja3-v$pkgver
           EOF
+      - name: Prepare environment (Windows)
+        if: runner.os == 'Windows'
+        id: prepare-env
+        shell: pwsh
+        run: |
+          $tag = (git describe --abbrev=0 --tags 2>$null) -replace '^v([0-9]+)\.', '$1.'
+          $pkgver = (Get-Content package.json | Select-String -Pattern '\"version\": *\"([^\"]+)\"' | ForEach-Object { $_.Matches[0].Groups[1].Value })
+          if ($tag -ne $pkgver) { Write-Error \"tag differs from package.json version ($tag != $pkgver)\"; exit 1 }
+          $os = node -e \"console.log(process.platform)\"
+          $arch = node -e \"console.log(process.arch)\"
+          $node_abi = node -e \"console.log('node-v' + process.versions.modules)\"
+          $binding_artifact = \"node_libcurl_ja3-v$pkgver-$node_abi-$os-$arch\"
+          \"pkgver=$pkgver\" >> $env:GITHUB_OUTPUT
+          \"binding_artifact=$binding_artifact\" >> $env:GITHUB_OUTPUT
+          \"package_artifact=node-libcurl-ja3-v$pkgver\" >> $env:GITHUB_OUTPUT
 
       # changes timestamps for files in the curl-impersonate submodule to their git mtime
       # to allow the build cache to work, else it will think all files have been modified
-      - name: Restore curl-impersonate timestamps
+      - if: runner.os != 'Windows'
+        name: Restore curl-impersonate timestamps
         uses: chetan/git-restore-mtime-action@v2
         with:
           working-directory: deps/curl-impersonate
 
-      - name: Restore curl-impersonate build cache
+      - if: runner.os != 'Windows'
+        name: Restore curl-impersonate build cache
         id: libcurl-build-cache
         uses: actions/cache@v4
         with:
@@ -129,7 +148,8 @@ jobs:
       - name: Build
         run: yarn build:dist
 
-      - name: Get curl-impersonate version
+      - if: runner.os != 'Windows'
+        name: Get curl-impersonate version
         run: |
           deps/curl-impersonate/build/curl-impersonate/bin/curl-impersonate --version | grep -v unreleased | sed -E 's/^(curl [^ ]+) \([^)]+\)/Versions: \1/'
 
@@ -164,8 +184,10 @@ jobs:
       - name: Pretest
         run: yarn test --testNamePattern='^Browser Impersonation' test/curl/impersonate.spec.ts
 
-      - name: Rename curl-impersonate build tarball
-        run: mv deps/curl-impersonate/build/curl-impersonate.tar.gz 'build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz'
+      - if: runner.os != 'Windows'
+        name: Rename curl-impersonate build tarball
+        shell: bash
+        run: mv deps/curl-impersonate/build/curl-impersonate.tar.gz "build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz"
 
       - if: matrix.node == '24'
         name: Upload curl-impersonate build tarball
@@ -179,7 +201,10 @@ jobs:
         run: rm -f build/${{ steps.prepare-env.outputs.curl_impersonate_artifact }}.tar.gz
 
       - name: Create native binding tarball
-        run: tar zcf build/${{ steps.prepare-env.outputs.binding_artifact }}.tar.gz -C lib/binding/Release $(ls lib/binding/Release)
+        shell: bash
+        run: |
+          mkdir -p build
+          tar -czf "build/${{ steps.prepare-env.outputs.binding_artifact }}.tar.gz" -C lib/binding/Release .
 
       - name: Upload native binding tarball
         uses: actions/upload-artifact@v4
