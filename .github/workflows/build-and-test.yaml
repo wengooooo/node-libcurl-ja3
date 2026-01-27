@@ -105,9 +105,11 @@ jobs:
         shell: pwsh
         run: |
           $commit = (git rev-parse HEAD)
-          $pkgver = (Get-Content package.json | Select-String -Pattern '\"version\": *\"([^\"]+)\"' | ForEach-Object { $_.Matches[0].Groups[1].Value })
-          $pkgver = \"$pkgver-$($commit.Substring(0,7))\"
-          (Get-Content package.json) -replace '(\"version\": *)\"[^\"]+\"', \"`$1`\"$pkgver`\"\" | Set-Content package.json
+          $pkgver = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $pkgver = "$pkgver-$($commit.Substring(0,7))"
+          $packageJson = Get-Content package.json -Raw | ConvertFrom-Json
+          $packageJson.version = $pkgver
+          $packageJson | ConvertTo-Json -Depth 100 | Set-Content package.json
           $os = node -e \"console.log(process.platform)\"
           $arch = node -e \"console.log(process.arch)\"
           $node_abi = node -e \"console.log('node-v' + process.versions.modules)\"
