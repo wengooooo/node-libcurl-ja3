@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [5.2.5] - 2026-01-28
+
+### Fixed
+- Windows 安装：install.js 在找不到预编译时启用 --fallback-to-build，并可靠定位 node-pre-gyp 可执行路径
+- 绑定加载：binding.ts 增加对嵌套 ABI 目录的回退解析，避免压缩包展开造成的路径差异
+
 ## [5.2.4] - 2026-01-28
 
 ### Fixed
@@ -517,6 +523,7 @@ Special Thanks to [@koskokos2](https://github.com/koskokos2) for their contribut
 ## [1.2.0] - 2017-08-28
 
 [5.2.4]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.3...v5.2.4
+[5.2.5]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.4...v5.2.5
 [5.2.3]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.2...v5.2.3
 [5.2.1]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.0...v5.2.1
 [5.2.2]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.1...v5.2.2
