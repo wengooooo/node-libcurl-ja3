@@ -18,15 +18,21 @@ if (moduleParent.length === 1) {
 }
 
 if (!nodeLibcurlBindingPath || !fs.existsSync(nodeLibcurlBindingPath)) {
-  nodeLibcurlBindingPath = path.join(
-    path.join(__dirname, '..'),
-    pkg.binary.module_path
-      .replaceAll('{configuration}', `Release`)
-      .replaceAll('{node_abi}', `node-v${process.versions.modules}`)
-      .replaceAll('{platform}', process.platform)
-      .replaceAll('{arch}', process.arch),
-    `${pkg.binary.module_name}.node`,
-  )
+  const replaced = pkg.binary.module_path
+    .replaceAll('{configuration}', `Release`)
+    .replaceAll('{node_abi}', `node-v${process.versions.modules}`)
+    .replaceAll('{platform}', process.platform)
+    .replaceAll('{arch}', process.arch)
+  const baseDir = path.join(path.join(__dirname, '..'), replaced)
+  nodeLibcurlBindingPath = path.join(baseDir, `${pkg.binary.module_name}.node`)
+  if (!fs.existsSync(nodeLibcurlBindingPath)) {
+    const leaf = path.basename(baseDir)
+    const altDir = path.join(baseDir, leaf)
+    const altPath = path.join(altDir, `${pkg.binary.module_name}.node`)
+    if (fs.existsSync(altPath)) {
+      nodeLibcurlBindingPath = altPath
+    }
+  }
 }
 
 export const NODE_LIBCURL_BINDING = require(
