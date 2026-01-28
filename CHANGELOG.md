@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [5.2.4] - 2026-01-28
+
+### Fixed
+- 修复预编译绑定压缩包目录结构，避免 ABI 目录嵌套导致运行时路径错误
+
+### Changed
+- 发布流程：绑定打包按单层 ABI 目录打包，安装后路径为 lib/binding/Release/{node_abi}-{platform}-{arch}/node_libcurl_ja3.node
+
 ## [5.2.3] - 2026-01-28
 
 ### Fixed
@@ -508,6 +516,7 @@ Special Thanks to [@koskokos2](https://github.com/koskokos2) for their contribut
 - Improved code style, started using prettier
 ## [1.2.0] - 2017-08-28
 
+[5.2.4]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.3...v5.2.4
 [5.2.3]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.2...v5.2.3
 [5.2.1]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.0...v5.2.1
 [5.2.2]: https://github.com/andrewmackrodt/node-libcurl-ja3/compare/v5.2.1...v5.2.2
