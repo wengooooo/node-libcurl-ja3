@@ -1,17 +1,25 @@
 const { spawnSync } = require('node:child_process')
 const { join } = require('node:path')
 
-function runNodePreGyp(cmd) {
-  const script = join(
-    __dirname,
-    '..',
-    'node_modules',
-    '@mapbox',
-    'node-pre-gyp',
-    'bin',
-    'node-pre-gyp',
-  )
-  return spawnSync(process.execPath, [script, cmd], {
+function resolveNodePreGyp() {
+  try {
+    return require.resolve('@mapbox/node-pre-gyp/bin/node-pre-gyp')
+  } catch {
+    return join(
+      __dirname,
+      '..',
+      'node_modules',
+      '@mapbox',
+      'node-pre-gyp',
+      'bin',
+      'node-pre-gyp',
+    )
+  }
+}
+
+function runNodePreGyp(args) {
+  const script = resolveNodePreGyp()
+  return spawnSync(process.execPath, [script].concat(args), {
     stdio: 'inherit',
     env: process.env,
   })
@@ -19,9 +27,9 @@ function runNodePreGyp(cmd) {
 
 function run() {
   if (process.platform === 'win32') {
-    let r = runNodePreGyp('install')
+    let r = runNodePreGyp(['install', '--fallback-to-build'])
     if (r.status !== 0) {
-      r = runNodePreGyp('rebuild')
+      r = runNodePreGyp(['rebuild'])
       if (r.status !== 0) process.exit(r.status || 1)
     }
     process.exit(0)
