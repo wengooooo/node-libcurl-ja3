@@ -215,14 +215,20 @@ jobs:
         shell: bash
         run: |
           mkdir -p build
-          tar -czf "build/${{ env.BINDING_ARTIFACT }}.tar.gz" -C lib/binding/Release .
+          os=$(node -e 'console.log(process.platform)')
+          arch=$(node -e 'console.log(process.arch)')
+          node_abi=$(node -e 'console.log("node-v"+process.versions.modules)')
+          tar -czf "build/${{ env.BINDING_ARTIFACT }}.tar.gz" -C "lib/binding/Release/$node_abi-$os-$arch" .
       - if: runner.os == 'Windows'
         name: Create native binding tarball (Windows)
         shell: pwsh
         run: |
           if (Test-Path build) { Remove-Item -Recurse -Force build }
           New-Item -ItemType Directory -Force -Path build | Out-Null
-          tar -czf "build/$env:BINDING_ARTIFACT.tar.gz" -C lib/binding/Release .
+          $os = node -e "console.log(process.platform)"
+          $arch = node -e "console.log(process.arch)"
+          $node_abi = node -e "console.log('node-v' + process.versions.modules)"
+          tar -czf "build/$env:BINDING_ARTIFACT.tar.gz" -C "lib/binding/Release/$node_abi-$os-$arch" .
 
       - if: runner.os != 'Windows'
         name: Upload native binding tarball (Unix)
